@@ -1,0 +1,4 @@
+<launch>
+    <!--RVIZ-->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d /home/robond/Udacity-Robo-ND/Robo-ND_Chapters/04_Localization/03_turtlebot_catkin_ws/src/EKFLab.rviz"/>
+</launch>
