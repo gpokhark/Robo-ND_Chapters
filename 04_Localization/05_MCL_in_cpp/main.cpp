@@ -263,6 +263,14 @@ int main() {
     // std::cout << p[i].show_pose() << std::endl;
   }
 
+  // Re-initialize myrobot object and Initialize a measurment vector
+  myrobot = Robot();
+  vector<double> z;
+
+  // Move the robot and sense the environment afterwards
+  myrobot = myrobot.move(0.1, 5.0);
+  z = myrobot.sense();
+
   // Now, simulate motion for each particle
   // TODO: Create a new particle set 'p2'
   // TODO: Rotate each particle by 0.1 and move it forward by 5.0
@@ -270,9 +278,17 @@ int main() {
   // line
   Robot p2[n];
   for (int i = 0; i < n; i++) {
-    p[i].move(0.1, 5.0);
+    p2[i] = p[i].move(0.1, 5.0);
     p[i] = p2[i];
     // std::cout << p[i].show_pose() << std::endl;
+  }
+
+  // TODO: Generate particle weights depending on robot's measurement
+  // TODO: Print particle weights, each on a single line
+  double w[n];
+  for (int i = 0; i < n; i++) {
+    w[i] = p[i].measurement_prob(z);
+    std::cout << w[i] << std::endl;
   }
 
   return 0;
