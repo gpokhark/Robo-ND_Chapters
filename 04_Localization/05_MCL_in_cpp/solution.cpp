@@ -216,51 +216,23 @@ graph
 }
 */
 
-//####   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ####
 int main() {
-  // Instantiating a robot object form the Robot class
+  // Practice Interfacing with Robot Class
   Robot myrobot;
-
-  // TODO: Simulate Noise
-  // Forward Noise=5.0, Turn Noise=0.1,Sense Noise=5.0
   myrobot.set_noise(5.0, 0.1, 5.0);
+  myrobot.set(30.0, 50.0, M_PI / 2.0);
+  myrobot.move(-M_PI / 2.0, 15.0);
+  // cout << myrobot.read_sensors() << endl;
+  myrobot.move(-M_PI / 2.0, 10.0);
+  // cout << myrobot.read_sensors() << endl;
 
-  // TODO: Set robot new positions to x=30.0, y=50.0 and orientation=PI/2
-  // Fill in the position and orientation values in myrobot.set() function
-  myrobot.set(30.0, 50.0, M_PI * 0.5);
-
-  // Printing out the new robot position and orientation
-  // std::cout << myrobot.show_pose() << std::endl;
-
-  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
-  // by 15.0 Use M_PI for the pi value
-  myrobot.move(M_PI * -0.5, 15.0);
-
-  // Printing the distance between the robot toward the eight landmarks
-  // std::cout << myrobot.read_sensors() << std::endl;
-
-  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
-  // by 10.0 Use M_PI for the pi value
-  myrobot.move(M_PI * -0.5, 10.0);
-
-  // TODO: Print out the new robot position and orientation
-  // std::cout << myrobot.show_pose() << std::endl;
-
-  // Printing the distance between the robot toward the eight landmarks
-  // std::cout << myrobot.read_sensors() << std::endl;
-
-  // Instantiating 1000 particles each with a random position and orientation
+  // Create a set of particles
   int n = 1000;
   Robot p[n];
 
-  // TODO: Your job is to loop over the set of particles
-  // TODO: For each particle add noise: Forward_Noise=0.05, Turn_Noise=0.05, and
-  // Sense_Noise=5.0
-  // TODO: And print its pose on a single line
-  std::cout << "Size of array p = " << sizeof(p) / sizeof(p[0]) << std::endl;
   for (int i = 0; i < n; i++) {
     p[i].set_noise(0.05, 0.05, 5.0);
-    // std::cout << p[i].show_pose() << std::endl;
+    // cout << p[i].show_pose() << endl;
   }
 
   // Re-initialize myrobot object and Initialize a measurment vector
@@ -274,34 +246,28 @@ int main() {
     myrobot = myrobot.move(0.1, 5.0);
     z = myrobot.sense();
 
-    // Now, simulate motion for each particle
-    // TODO: Create a new particle set 'p2'
-    // TODO: Rotate each particle by 0.1 and move it forward by 5.0
-    // TODO: Assign 'p2' to 'p' and print the particle poses, each on a single
-    // line
+    // Simulate a robot motion for each of these particles
     Robot p2[n];
     for (int i = 0; i < n; i++) {
       p2[i] = p[i].move(0.1, 5.0);
       p[i] = p2[i];
-      // std::cout << p[i].show_pose() << std::endl;
     }
 
-    // TODO: Generate particle weights depending on robot's measurement
-    // TODO: Print particle weights, each on a single line
+    // Generate particle weights depending on robot's measurement
     double w[n];
     for (int i = 0; i < n; i++) {
       w[i] = p[i].measurement_prob(z);
-      // std::cout << w[i] << std::endl;
+      // cout << w[i] << endl;
     }
 
-    // TODO: Resample the particles with a sample probability proportional to
-    // the importance weight
+    // Resample the particles with a sample probability proportional to the
+    // importance weight
     Robot p3[n];
     int index = gen_real_random() * n;
-    // std::cout << index << std::endl;
+    // cout << index << endl;
     double beta = 0.0;
     double mw = max(w, n);
-    // std::cout << mw << std::endl;
+    // cout << mw;
     for (int i = 0; i < n; i++) {
       beta += gen_real_random() * 2.0 * mw;
       while (beta > w[index]) {
@@ -310,18 +276,18 @@ int main() {
       }
       p3[i] = p[index];
     }
-
     for (int k = 0; k < n; k++) {
       p[k] = p3[k];
-      // std::cout << p[k].show_pose() << std::endl;
+      // cout << p[k].show_pose() << endl;
     }
 
-    // TODO: Evaluate the error by priting it in this form:
+    //####   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ####
+
+    // Evaluate the error by priting it in this form:
     // cout << "Step = " << t << ", Evaluation = " << ErrorValue << endl;
-    std::cout << "Step = " << t
-              << ", Evaluation = " << evaluation(myrobot, p, n) << std::endl;
-  }
+    cout << "Step = " << t << ", Evaluation = " << evaluation(myrobot, p, n)
+         << endl;
+
+  }  // End of Steps loop
   return 0;
 }
-
-// compile the code using command "g++ -std=c++11 main.cpp"
