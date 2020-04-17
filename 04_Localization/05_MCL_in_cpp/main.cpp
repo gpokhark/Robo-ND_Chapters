@@ -224,30 +224,57 @@ int main() {
   // TODO: Simulate Noise
   // Forward Noise=5.0, Turn Noise=0.1,Sense Noise=5.0
   myrobot.set_noise(5.0, 0.1, 5.0);
-  
+
   // TODO: Set robot new positions to x=30.0, y=50.0 and orientation=PI/2
   // Fill in the position and orientation values in myrobot.set() function
   myrobot.set(30.0, 50.0, M_PI * 0.5);
 
   // Printing out the new robot position and orientation
-  std::cout << myrobot.show_pose() << std::endl;
+  // std::cout << myrobot.show_pose() << std::endl;
 
   // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
   // by 15.0 Use M_PI for the pi value
   myrobot.move(M_PI * -0.5, 15.0);
 
   // Printing the distance between the robot toward the eight landmarks
-  std::cout << myrobot.read_sensors() << std::endl;
+  // std::cout << myrobot.read_sensors() << std::endl;
 
   // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
   // by 10.0 Use M_PI for the pi value
   myrobot.move(M_PI * -0.5, 10.0);
 
   // TODO: Print out the new robot position and orientation
-  std::cout << myrobot.show_pose() << std::endl;
+  // std::cout << myrobot.show_pose() << std::endl;
 
   // Printing the distance between the robot toward the eight landmarks
-  std::cout << myrobot.read_sensors() << std::endl;
+  // std::cout << myrobot.read_sensors() << std::endl;
+
+  // Instantiating 1000 particles each with a random position and orientation
+  int n = 1000;
+  Robot p[n];
+
+  // TODO: Your job is to loop over the set of particles
+  // TODO: For each particle add noise: Forward_Noise=0.05, Turn_Noise=0.05, and
+  // Sense_Noise=5.0
+  // TODO: And print its pose on a single line
+  std::cout << "Size of array p = " << sizeof(p) / sizeof(p[0]) << std::endl;
+  for (int i = 0; i < n; i++) {
+    p[i].set_noise(0.05, 0.05, 5.0);
+    // std::cout << p[i].show_pose() << std::endl;
+  }
+
+  // Now, simulate motion for each particle
+  // TODO: Create a new particle set 'p2'
+  // TODO: Rotate each particle by 0.1 and move it forward by 5.0
+  // TODO: Assign 'p2' to 'p' and print the particle poses, each on a single
+  // line
+  Robot p2[n];
+  for (int i = 0; i < n; i++) {
+    p[i].move(0.1, 5.0);
+    p[i] = p2[i];
+    // std::cout << p[i].show_pose() << std::endl;
+  }
+
   return 0;
 }
 
