@@ -221,6 +221,10 @@ int main() {
   // Instantiating a robot object form the Robot class
   Robot myrobot;
 
+  // TODO: Simulate Noise
+  // Forward Noise=5.0, Turn Noise=0.1,Sense Noise=5.0
+  myrobot.set_noise(5.0, 0.1, 5.0);
+  
   // TODO: Set robot new positions to x=30.0, y=50.0 and orientation=PI/2
   // Fill in the position and orientation values in myrobot.set() function
   myrobot.set(30.0, 50.0, M_PI * 0.5);
@@ -228,15 +232,15 @@ int main() {
   // Printing out the new robot position and orientation
   std::cout << myrobot.show_pose() << std::endl;
 
-  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward by 15.0
-  // Use M_PI for the pi value
+  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
+  // by 15.0 Use M_PI for the pi value
   myrobot.move(M_PI * -0.5, 15.0);
 
   // Printing the distance between the robot toward the eight landmarks
   std::cout << myrobot.read_sensors() << std::endl;
 
-  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward by 10.0
-  // Use M_PI for the pi value
+  // TODO: Rotate the robot clockwise by PI/2.0 and then move him forward
+  // by 10.0 Use M_PI for the pi value
   myrobot.move(M_PI * -0.5, 10.0);
 
   // TODO: Print out the new robot position and orientation
