@@ -288,9 +288,30 @@ int main() {
   double w[n];
   for (int i = 0; i < n; i++) {
     w[i] = p[i].measurement_prob(z);
-    std::cout << w[i] << std::endl;
+    // std::cout << w[i] << std::endl;
   }
 
+  // TODO: Resample the particles with a sample probability proportional to the
+  // importance weight
+  Robot p3[n];
+  int index = gen_real_random() * n;
+  // std::cout << index << std::endl;
+  double beta = 0.0;
+  double mw = max(w, n);
+  // std::cout << mw << std::endl;
+  for (int i; i < n; i++) {
+    beta += gen_real_random() * 2.0 * mw;
+    while (beta > w[index]) {
+      beta -= w[index];
+      index = mod((index + 1), n);
+    }
+    p3[i] = p[index];
+  }
+
+  for (int k = 0; k < n; k++) {
+    p[k] = p3[k];
+    std::cout << p[k].show_pose() << std::endl;
+  }
   return 0;
 }
 
