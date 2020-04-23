@@ -21,7 +21,47 @@ std::vector<std::vector<double>> l(mapWidth / gridWidth,
 double inverseSensorModel(double x, double y, double theta, double xi,
                           double yi, double sensorData[]) {
   // You will be coding this section in the upcoming concept
-  return 0.4;
+
+  // Defining sensor characteristics
+  double Zk, thetaK, sensorTheta;
+  double minDelta = -1;
+  double alpha = 200, beta = 20;
+
+  // compute r and phi
+  double r = sqrt(pow(xi - x, 2) + pow(yi - y, 2));
+  double phi = atan2(yi - y, xi - x) - theta;
+
+  // Scaling measurement to [-90 -37.5 -22.5 -7.5 7.5 22.5 37.5 90]
+  for (int i = 0; i < 8; i++) {
+    if (i == 0) {
+      sensorTheta = -90 * (M_PI / 180);
+    } else if (i == 1) {
+      sensorTheta = -37.5 * (M_PI / 180);
+    } else if (i == 6) {
+      sensorTheta = 37.5 * (M_PI / 180);
+    } else if (i == 7) {
+      sensorTheta = 90 * (M_PI / 180);
+    } else {
+      sensorTheta = (-37.5 + (i - 1) * 15) * (M_PI / 180);
+    }
+
+    // we are finding the measurement or grid lies in front of which sensor
+    if (fabs(phi - sensorTheta) < minDelta || minDelta == -1) {
+      Zk = sensorData[i];
+      thetaK = sensorTheta;
+      minDelta = fabs(phi - sensorTheta);
+    }
+  }
+
+  // Evaluate the three cases
+  if (r > min((double)Zmax, Zk + alpha / 2) || fabs(phi - thetaK) > beta / 2 ||
+      Zk > Zmax || Zk < Zmin) {
+    return l0;
+  } else if (Zk < Zmax && fabs(r - Zk) < alpha / 2) {
+    return locc;
+  } else if (r <= Zk) {
+    return lfree;
+  }
 }
 
 void occupancyGridMapping(double Robotx, double Roboty, double Robottheta,
@@ -59,6 +99,7 @@ int main() {
   // Scanning the files and retrieving measurement and poses at each timestamp
   while (fscanf(posesFile, "%lf %lf %lf %lf", &timeStamp, &robotX, &robotY,
                 &robotTheta) != EOF) {
+    fscanf(measurementFile, "%lf", &timeStamp);
     for (int i = 0; i < 8; i++) {
       fscanf(measurementFile, "%lf", &measurementData[i]);
     }
