@@ -1,7 +1,11 @@
+// Compile with:
+// g++ main.cpp -o app -std=c++11 -I/usr/include/python2.7 -lpython2.7
+#include "src/matplotlibcpp.h"  //Graph Library
 #include <iostream>
 #include <math.h>
 #include <vector>
 using namespace std;
+namespace plt = matplotlibcpp;
 
 // Sensor characteristic: Min and Max ranges of the beams
 double Zmax = 5000, Zmin = 170;
@@ -88,6 +92,32 @@ void occupancyGridMapping(double Robotx, double Roboty, double Robottheta,
   }
 }
 
+void visualization() {
+  // TODO: Initialize a plot named Map of size 300x150
+  plt::title("Occupancy Grid Mapping");
+  plt::xlim(0.0, mapWidth / gridWidth);
+  plt::ylim(0.0, mapHeight / gridHeight);
+
+  // TODO: Loop over the log odds values of the cells and plot each cell state.
+  // Unkown state: green color, occupied state: black color, and free state: red
+  // color
+  for (double x = 0; x < mapWidth / gridWidth; x++) {
+    for (double y = 0; y < mapHeight / gridHeight; y++) {
+      if (l[x][y] == 0) {
+        plt::plot({x}, {y}, "g.");  // Unkown state: green color
+      } else if (l[x][y] > 0) {
+        plt::plot({x}, {y}, "k.");  // Occupied state: black color
+      } else {
+        plt::plot({x}, {y}, "r.");  // Free state: red color
+      }
+    }
+  }
+
+  // TODO: Save the image and close the plot
+  plt::save("./Images/Map.png");
+  plt::clf();
+}
+
 int main() {
   double timeStamp;
   double measurementData[8];
@@ -114,5 +144,8 @@ int main() {
     }
   }
   std::cout << "\n ";
+
+  // Visualize the map
+  visualization();
   return 0;
 }
