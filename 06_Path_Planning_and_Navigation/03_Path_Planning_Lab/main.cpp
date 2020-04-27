@@ -17,6 +17,13 @@ class Map {
                                         {0, 1, 0, 0, 0, 0},
                                         {0, 1, 0, 0, 0, 0},
                                         {0, 0, 0, 1, 1, 0}};
+
+  // TODO: Add a Manhattan-based heuristic vector to the Map class
+  std::vector<std::vector<int>> heuristic = {{9, 8, 7, 6, 5, 4},
+                                             {8, 7, 6, 5, 4, 3},
+                                             {7, 6, 5, 4, 3, 2},
+                                             {6, 5, 4, 3, 2, 1},
+                                             {5, 4, 3, 2, 1, 0}};
 };
 /* TODO: Define a Planner class
    Inside the Planner class, define the start, goal, cost, movements, and
@@ -75,14 +82,15 @@ void search(Map map, Planner planner) {
   std::vector<std::vector<int>> action(map.mapHeight,
                                        std::vector<int>(map.mapWidth, -1));
 
-  // Defined the triplet values
+  // Defined the quadruplet values
   int x = planner.start[0];
   int y = planner.start[1];
   int g = 0;
+  int f = g + map.heuristic[x][y];
 
   // Store the expansion
   std::vector<std::vector<int>> open;
-  open.push_back({g, x, y});
+  open.push_back({f, g, x, y});
 
   // Flags and counters
   bool found = false;
@@ -99,7 +107,7 @@ void search(Map map, Planner planner) {
       resign = true;
       std::cout << "Failed to reach the goal.\n";
     } else {
-      // Remove the triplets from the open list
+      // Remove the quadruplets from the open list
       sort(open.begin(), open.end());
       reverse(open.begin(), open.end());
       std::vector<int> next;
@@ -107,9 +115,9 @@ void search(Map map, Planner planner) {
       next = open.back();
       open.pop_back();
 
-      x = next[1];
-      y = next[2];
-      g = next[0];
+      x = next[2];
+      y = next[3];
+      g = next[1];
 
       // Fill the expanded vectors with count
       expand[x][y] = count;
@@ -130,7 +138,8 @@ void search(Map map, Planner planner) {
               y2 < map.grid[0].size()) {
             if (closed[x2][y2] == 0 && map.grid[x2][y2] == 0) {
               int g2 = g + planner.cost;
-              open.push_back({g2, x2, y2});
+              f = g2 + map.heuristic[x2][y2];
+              open.push_back({f, g2, x2, y2});
               closed[x2][y2] = 1;
               action[x2][y2] = i;
             }
@@ -140,7 +149,7 @@ void search(Map map, Planner planner) {
     }
   }
   // Print the expansion List
-  // print2DVector(expand);
+  print2DVector(expand);
 
   // Find the path with robot orientation
   std::vector<std::vector<std::string>> policy(
@@ -160,6 +169,7 @@ void search(Map map, Planner planner) {
   }
 
   // Print the path with arrows
+  std::cout << "\n";
   print2DVector(policy);
 }
 

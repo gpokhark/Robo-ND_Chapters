@@ -15,6 +15,12 @@ class Map {
                                {0, 1, 0, 0, 0, 0},
                                {0, 1, 0, 0, 0, 0},
                                {0, 0, 0, 1, 1, 0}};
+
+  vector<vector<int> > heuristic = {{9, 8, 7, 6, 5, 4},
+                                    {8, 7, 6, 5, 4, 3},
+                                    {7, 6, 5, 4, 3, 2},
+                                    {6, 5, 4, 3, 2, 1},
+                                    {5, 4, 3, 2, 1, 0}};
 };
 
 // Planner class
@@ -52,16 +58,17 @@ void search(Map map, Planner planner) {
   // Create action array filled with -1
   vector<vector<int> > action(map.mapHeight, vector<int>(map.mapWidth, -1));
 
-  // Defined the triplet values
+  // Defined the quadruplet values
   int x = planner.start[0];
   int y = planner.start[1];
   int g = 0;
+  int f = g + map.heuristic[x][y];
 
   // Store the expansions
   vector<vector<int> > open;
-  open.push_back({g, x, y});
+  open.push_back({f, g, x, y});
 
-  // Flags and counters
+  // Flags and Counts
   bool found = false;
   bool resign = false;
   int count = 0;
@@ -78,7 +85,7 @@ void search(Map map, Planner planner) {
     }
     // Keep expanding
     else {
-      // Remove triplets from the open list
+      // Remove quadruplets from the open list
       sort(open.begin(), open.end());
       reverse(open.begin(), open.end());
       vector<int> next;
@@ -86,9 +93,9 @@ void search(Map map, Planner planner) {
       next = open.back();
       open.pop_back();
 
-      x = next[1];
-      y = next[2];
-      g = next[0];
+      x = next[2];
+      y = next[3];
+      g = next[1];
 
       // Fill the expand vectors with count
       expand[x][y] = count;
@@ -109,7 +116,8 @@ void search(Map map, Planner planner) {
               y2 < map.grid[0].size()) {
             if (closed[x2][y2] == 0 and map.grid[x2][y2] == 0) {
               int g2 = g + planner.cost;
-              open.push_back({g2, x2, y2});
+              f = g2 + map.heuristic[x2][y2];
+              open.push_back({f, g2, x2, y2});
               closed[x2][y2] = 1;
               action[x2][y2] = i;
             }
@@ -118,8 +126,9 @@ void search(Map map, Planner planner) {
       }
     }
   }
+
   // Print the expansion List
-  // print2DVector(expand);
+  print2DVector(expand);
 
   // Find the path with robot orientation
   vector<vector<string> > policy(map.mapHeight,
@@ -138,16 +147,16 @@ void search(Map map, Planner planner) {
     y = y2;
   }
 
-  // Print the path with arrows
+  // Print the robot path
+  cout << endl;
   print2DVector(policy);
 }
 
 int main() {
-  // Instantiate map and planner objects
+  // Instantiate a planner and map objects
   Map map;
   Planner planner;
 
-  // Search for the expansions
   search(map, planner);
 
   return 0;
