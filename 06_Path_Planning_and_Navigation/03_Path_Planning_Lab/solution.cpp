@@ -49,6 +49,9 @@ void search(Map map, Planner planner) {
   // Create expand array filled with -1
   vector<vector<int> > expand(map.mapHeight, vector<int>(map.mapWidth, -1));
 
+  // Create action array filled with -1
+  vector<vector<int> > action(map.mapHeight, vector<int>(map.mapWidth, -1));
+
   // Defined the triplet values
   int x = planner.start[0];
   int y = planner.start[1];
@@ -108,6 +111,7 @@ void search(Map map, Planner planner) {
               int g2 = g + planner.cost;
               open.push_back({g2, x2, y2});
               closed[x2][y2] = 1;
+              action[x2][y2] = i;
             }
           }
         }
@@ -115,7 +119,27 @@ void search(Map map, Planner planner) {
     }
   }
   // Print the expansion List
-  print2DVector(expand);
+  // print2DVector(expand);
+
+  // Find the path with robot orientation
+  vector<vector<string> > policy(map.mapHeight,
+                                 vector<string>(map.mapWidth, "-"));
+
+  // Going backward
+  x = planner.goal[0];
+  y = planner.goal[1];
+  policy[x][y] = '*';
+
+  while (x != planner.start[0] or y != planner.start[1]) {
+    x2 = x - planner.movements[action[x][y]][0];
+    y2 = y - planner.movements[action[x][y]][1];
+    policy[x2][y2] = planner.movements_arrows[action[x][y]];
+    x = x2;
+    y = y2;
+  }
+
+  // Print the path with arrows
+  print2DVector(policy);
 }
 
 int main() {
