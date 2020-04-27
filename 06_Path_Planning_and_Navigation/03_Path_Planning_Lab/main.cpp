@@ -67,6 +67,10 @@ void search(Map map, Planner planner) {
                                        std::vector<int>(map.mapWidth));
   closed[planner.start[0]][planner.start[1]] = 1;
 
+  // Create expand array filled with -1
+  std::vector<std::vector<int>> expand(map.mapHeight,
+                                       std::vector<int>(map.mapWidth, -1));
+
   // Defined the triplet values
   int x = planner.start[0];
   int y = planner.start[1];
@@ -76,9 +80,10 @@ void search(Map map, Planner planner) {
   std::vector<std::vector<int>> open;
   open.push_back({g, x, y});
 
-  // Flags
+  // Flags and counters
   bool found = false;
   bool resign = false;
+  int count = 0;
 
   int x2;
   int y2;
@@ -102,10 +107,14 @@ void search(Map map, Planner planner) {
       y = next[2];
       g = next[0];
 
+      // Fill the expanded vectors with count
+      expand[x][y] = count;
+      count += 1;
+
       // Check if we reached the goal
       if (x == planner.goal[0] && y == planner.goal[1]) {
         found = true;
-        std::cout << "[" << g << ", " << x << ", " << y << "]\n";
+        // std::cout << "[" << g << ", " << x << ", " << y << "]\n";
       }
 
       // Else expand to new elements
@@ -125,6 +134,8 @@ void search(Map map, Planner planner) {
       }
     }
   }
+  // Print the expansion List
+  print2DVector(expand);
 }
 
 /*############ Don't modify the main function############*/
