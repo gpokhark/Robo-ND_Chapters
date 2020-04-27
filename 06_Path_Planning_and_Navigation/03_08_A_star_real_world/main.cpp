@@ -9,9 +9,9 @@ using namespace std;
 // Map class
 class Map {
  public:
-  const static int mapHeight =    /* #### TODO: mapHeight #### */
-      const static int mapWidth = /* #### TODO: mapWidth #### */
-      vector<vector<double> > map = GetMap();
+  const static int mapHeight = 300; /* #### TODO: mapHeight #### */
+  const static int mapWidth = 150;  /* #### TODO: mapWidth #### */
+  vector<vector<double> > map = GetMap();
   vector<vector<int> > grid = MaptoGrid();
   vector<vector<int> > heuristic = GenerateHeuristic();
 
@@ -44,6 +44,15 @@ class Map {
     /* You need to convert these data to 0's and 1's and assigned it to grid
        where: 0: Free Space 1: Occupied + Unkown Space
     */
+    for (size_t x = 0; x < mapHeight; x++) {
+      for (size_t y = 0; y < mapWidth; y++) {
+        if (map[x][y] >= 0) {
+          grid[x][y] = 1;  // 0:unkown and >0:occupied
+        } else {
+          grid[x][y] = 0;  // <0:free
+        }
+      }
+    }
     return grid;
   }
 
@@ -52,6 +61,22 @@ class Map {
     int goal[2] = {60, 50};
     vector<vector<int> > heuristic(mapHeight, vector<int>(mapWidth));
     // Generate a Manhattan heursitic vector
+    for (size_t x = 0; x < heuristic.size(); x++) {
+      for (size_t y = 0; y < heuristic[0].size(); y++) {
+        int xd = goal[0] - x;
+        int yd = goal[1] - y;
+
+        // Manhattan distance
+        int d = abs(xd) + abs(yd);
+
+        // Euclidian Distance
+        // double d = sqrt(xd * xd + yd * yd);
+
+        // Chebyshev distance
+        // int d = max(abs(xd), abs(yd));
+        heuristic[x][y] = d;
+      }
+    }
     return heuristic;
   }
 };
@@ -59,9 +84,9 @@ class Map {
 // Planner class
 class Planner : Map {
  public:
-  int start[2] =    /* #### TODO: start #### */
-      int goal[2] = /* #### TODO: goal #### */
-      int cost = 1;
+  int start[2] = {230, 145}; /* #### TODO: start #### */
+  int goal[2] = {60, 50};    /* #### TODO: goal #### */
+  int cost = 1;
 
   string movements_arrows[4] = {"^", "<", "v", ">"};
 
@@ -185,7 +210,7 @@ Planner search(Map map, Planner planner) {
 
   // Print the robot path
   // cout << endl;
-  // print2DVector(policy);
+  print2DVector(policy);
 
   return planner;
 }
